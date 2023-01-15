@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + TS</title>
+    <script type="module" crossorigin src="/assets/index-772aaf72.js"></script>
+    <link rel="stylesheet" href="/assets/index-ab69754f.css">
+  </head>
+  <body>
+    <div class="container flex flex-col">
+      <div class="info">
+        This tool is for organizing the Keywords table. <br>
+        Please enter only CSV files. In order to convert Excel or Google sheets into CSV file <a href="https://www.automateexcel.com/how-to/save-excel-as-csv/" target="_blank">see this link</a>.
+        <br>
+        <input type="file" accept=".csv" id="file">
+      </div>
+      <div class="grids flex">
+        <div id="initial-grid" class="ag-grid ag-theme-alpine"></div>
+        <div id="favs-grid" class="ag-grid ag-theme-alpine"></div>
+      </div>
+      <div class="status-bar flex">
+        <div class="flex items-center">
+          <div class="initial-grid-status"></div>
+          <button id="export-initial" class="export-btn">Export to CSV</button>
+        </div>
+        <div class="flex items-center">
+          <div class="favs-grid-status"></div>
+          <button id="export-favs" class="export-btn">Export to CSV</button>
+        </div>
+      </div>
+      <div>Made with 💚 by <a href="https://www.linkedin.com/in/adir-kandel" target="_blank">Adir Kandel</a></div>
+    </div>
+    
+  </body>
+</html>

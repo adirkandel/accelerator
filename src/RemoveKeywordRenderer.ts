@@ -9,7 +9,7 @@ export default class RemoveKeywordRenderer implements ICellRendererComp<DataType
   eValue?: HTMLElement
   eGui = document.createElement('div')
   cellValue = ''
-  removeRowCallback?: (data: DataType) => void
+  removeRowCallback?: (data: DataType, action: 'remove') => void
   private eventListener = () => {}
 
   constructor() {
@@ -34,7 +34,7 @@ export default class RemoveKeywordRenderer implements ICellRendererComp<DataType
 
     // add event listener to button
     this.eventListener = () => {
-      RemoveKeywordRenderer.prototype.removeRowCallback && RemoveKeywordRenderer.prototype.removeRowCallback(params.data!)
+      RemoveKeywordRenderer.prototype.removeRowCallback && RemoveKeywordRenderer.prototype.removeRowCallback(params.data!, 'remove')
     };
     this.eButton.addEventListener('click', this.eventListener);
   }

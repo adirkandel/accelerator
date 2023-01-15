@@ -10,7 +10,6 @@ import { GridOptions } from "ag-grid-community/dist/lib/entities/gridOptions";
 import { DataKeys, DataType } from "./types";
 import RemoveKeywordRenderer from "./RemoveKeywordRenderer";
 
-
 const colContexts: DataKeys[] = [DataKeys.KEYWORD, DataKeys.DIFFICULTY, DataKeys.VOLUME, DataKeys.PHRASE];
 
 const serializeNumber = (num: number) => {
@@ -129,28 +128,26 @@ fileInput.addEventListener('change', async (event) => {
   }
 
   let favsGridOptions: GridOptions<DataType>
-  let favsRows: DataType[] = []
+  const FAVS_LOCAL_KEY = 'FAVS_LOCAL_KEY'
+  const favsFromLocalStorage = localStorage.getItem(FAVS_LOCAL_KEY)
+  let favsRowsData: DataType[] = favsFromLocalStorage ? JSON.parse(favsFromLocalStorage) : []
   let totalFavsRows = 0
-  const onSaveRow = (data: DataType) => {
-    const favsRowsCopy = [ ...favsRows ]
-    favsRowsCopy.push(data)
-    favsRows = favsRowsCopy
-    favsGridOptions.api!.setRowData(favsRows);
-    totalFavsRows = favsRows.length
-    updateStatusBar(favsGridOptions.api!, '.favs-grid-status', totalFavsRows)
-  }
-
-  const onRemoveRow = (data: DataType) => {
-    const favsRowsCopy = [ ...favsRows ]
-    const dataIndex = favsRowsCopy.findIndex(row => row === data)
-    if (dataIndex === -1) {
-      return
+  const onFavsRowUpdate = (data: DataType, action: 'save' | 'remove') => {
+    const favsRowsCopy = [ ...favsRowsData ]
+    const dataIndex = favsRowsCopy.findIndex(row => row.keyword === data.keyword && row.phrase === data.phrase)
+    if (action === 'save') {
+      dataIndex === -1 && favsRowsCopy.push(data)
+    } else {
+      if (dataIndex === -1) {
+        return
+      }
+      favsRowsCopy.splice(dataIndex, 1)
     }
-    favsRowsCopy.splice(dataIndex, 1)
-    favsRows = favsRowsCopy
-    favsGridOptions.api!.setRowData(favsRows);
-    totalFavsRows = favsRows.length
+    favsRowsData = favsRowsCopy
+    favsGridOptions.api!.setRowData(favsRowsData);
+    totalFavsRows = favsRowsData.length
     updateStatusBar(favsGridOptions.api!, '.favs-grid-status', totalFavsRows)
+    localStorage.setItem(FAVS_LOCAL_KEY, JSON.stringify(favsRowsData))
   }
 
   const rows = await csvToRows(file);
@@ -163,7 +160,7 @@ fileInput.addEventListener('change', async (event) => {
     onFilterChanged: ({api}) => updateStatusBar(api, '.initial-grid-status', totalRows),
     columnDefs: (() => {
       const columnDefsCopy = (gridOptions.columnDefs as ColDef<DataType>[]).slice();
-      SaveKeywordRenderer.prototype.saveRowCallback = onSaveRow
+      SaveKeywordRenderer.prototype.saveRowCallback = onFavsRowUpdate
       columnDefsCopy[0] = { ...columnDefsCopy[0], cellRenderer: SaveKeywordRenderer};
       return columnDefsCopy;
     })(),
@@ -172,7 +169,7 @@ fileInput.addEventListener('change', async (event) => {
   document.getElementById('export-initial')?.addEventListener('click', () => initGridOptions.api?.exportDataAsCsv())
 
   favsGridOptions = await generateGrid('#favs-grid', {
-    rowData: favsRows,
+    rowData: favsRowsData,
     onFirstDataRendered: (params) => {
       totalFavsRows = params.api.getModel().getRowCount();
       updateStatusBar(params.api, '.favs-grid-status', totalFavsRows);
@@ -180,7 +177,7 @@ fileInput.addEventListener('change', async (event) => {
     onFilterChanged: ({api}) => updateStatusBar(api, '.favs-grid-status', totalFavsRows),
     columnDefs: (() => {
       const columnDefsCopy = (gridOptions.columnDefs as ColDef<DataType>[]).slice();
-      RemoveKeywordRenderer.prototype.removeRowCallback = onRemoveRow
+      RemoveKeywordRenderer.prototype.removeRowCallback = onFavsRowUpdate
       columnDefsCopy[0] = { ...columnDefsCopy[0], cellRenderer: RemoveKeywordRenderer};
       return columnDefsCopy;
     })(),

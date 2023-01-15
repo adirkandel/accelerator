@@ -9,7 +9,7 @@ export default class SaveKeywordRenderer implements ICellRendererComp<DataType> 
   eValue?: HTMLElement
   eGui = document.createElement('div')
   cellValue = ''
-  saveRowCallback?: (data: DataType) => void
+  saveRowCallback?: (data: DataType, action: 'save') => void
   private eventListener = () => {}
 
   constructor() {
@@ -34,7 +34,7 @@ export default class SaveKeywordRenderer implements ICellRendererComp<DataType> 
 
     // add event listener to button
     this.eventListener = () => {
-      SaveKeywordRenderer.prototype.saveRowCallback && SaveKeywordRenderer.prototype.saveRowCallback(params.data!)
+      SaveKeywordRenderer.prototype.saveRowCallback && SaveKeywordRenderer.prototype.saveRowCallback(params.data!, 'save')
     };
     this.eButton.addEventListener('click', this.eventListener);
   }
