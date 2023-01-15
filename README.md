@@ -1,1 +1,1 @@
-# excelerator
+# accelerator

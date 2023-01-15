@@ -1,11 +1,11 @@
 {
-  "name": "excelerator",
+  "name": "accelerator",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build --base=/excelerator/ --outDir=docs",
+    "build": "tsc && vite build --base=/accelerator/ --outDir=docs",
     "preview": "vite preview"
   },
   "devDependencies": {
